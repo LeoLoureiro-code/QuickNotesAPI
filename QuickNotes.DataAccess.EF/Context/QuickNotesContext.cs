@@ -26,7 +26,6 @@ namespace QuickNotesAPI.DataAccess.EF.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                
                 var configuration = new ConfigurationBuilder()
                     .SetBasePath(AppContext.BaseDirectory)
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -113,12 +112,18 @@ namespace QuickNotesAPI.DataAccess.EF.Context
                 entity.Property(e => e.UserId)
                     .HasColumnType("int(10) unsigned")
                     .HasColumnName("User_id");
+
                 entity.Property(e => e.UserEmail)
                     .HasMaxLength(75)
                     .HasColumnName("User_email");
+
                 entity.Property(e => e.UserPassword)
                     .HasMaxLength(75)
                     .HasColumnName("User_password");
+
+                entity.Property(e => e.UserRole)
+                    .HasMaxLength(45)
+                    .HasColumnName("User_role");
             });
 
             OnModelCreatingPartial(modelBuilder);
