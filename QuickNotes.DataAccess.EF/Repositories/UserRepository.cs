@@ -1,4 +1,5 @@
-﻿using QuickNotes.DataAccess.EF.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using QuickNotes.DataAccess.EF.Models;
 using QuickNotes.DataAccess.EF.Repositories.Interfaces;
 using QuickNotesAPI.DataAccess.EF.Context;
 using QuickNotesAPI.DTO.UserDTO;
@@ -22,14 +23,24 @@ namespace QuickNotes.DataAccess.EF.Repositories
             _userRepository = userRepository;
         }
 
-        public Task<User> CreateUser(UserDTO Email)
+        public async Task<User> CreateUser(UserDTO User)
         {
-            throw new NotImplementedException();
+            var userEntity = new User
+            {
+                UserEmail = User.Email,
+                UserPassword = User.Password,
+            };
+
+            await _context.Users.AddAsync(userEntity);
+            await _context.SaveChangesAsync();
+            return userEntity;
+
+
         }
 
-        public Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
-            throw new NotImplementedException();
+            return await _context.Users.ToListAsync();
         }
         public Task<User> GetUserById(int id)
         {
