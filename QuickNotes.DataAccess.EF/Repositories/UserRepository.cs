@@ -3,11 +3,13 @@ using QuickNotes.DataAccess.EF.Models;
 using QuickNotes.DataAccess.EF.Repositories.Interfaces;
 using QuickNotesAPI.DataAccess.EF.Context;
 using QuickNotesAPI.DTO.UserDTO;
+using QuickNotesAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace QuickNotes.DataAccess.EF.Repositories
 {
@@ -15,21 +17,32 @@ namespace QuickNotes.DataAccess.EF.Repositories
     {
 
         private readonly QuickNotesContext _context;
-        private readonly IUserRepository _userRepository;
+        private readonly IPasswordService _passwordService;
 
-        public UserRepository(QuickNotesContext context, IUserRepository userRepository)
+
+        public UserRepository(QuickNotesContext context, IPasswordService passwordService)
         {
             _context = context;
-            _userRepository = userRepository;
+            _passwordService = passwordService;
         }
 
         public async Task<User> CreateUser(UserDTO User)
         {
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == User.Email);
+            if (existingUser != null)
+            {
+                throw new Exception("A user with this email already exists.");
+            }
+
+            string hashed = _passwordService.HashPassword(User.Password);
+
+
             var userEntity = new User
             {
                 UserEmail = User.Email,
-                UserPassword = User.Password,
+                UserPassword = hashed,
             };
+
 
             await _context.Users.AddAsync(userEntity);
             await _context.SaveChangesAsync();
@@ -42,24 +55,57 @@ namespace QuickNotes.DataAccess.EF.Repositories
         {
             return await _context.Users.ToListAsync();
         }
-        public Task<User> GetUserById(int id)
+
+
+        public async Task<User> GetUserById(int id)
         {
-            throw new NotImplementedException();
+            User? user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                throw new Exception("Book not found");
+            }
+
+            return user;
         }
 
-        public Task<User> GetUserByName(string username)
+        public async Task<User> GetUserByName(string userEmail)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail== userEmail);
+
+
+            if (user == null)
+                throw new Exception("User not found.");
+
+            return user;
         }
 
-        public Task<User> UpdateUser(int id, string email, string passwordhashed)
+        public async Task<User> UpdateUser(int id, string email, string password, string role)
         {
-            throw new NotImplementedException();
+            User? existingUser = await _context.Users.FindAsync(id);
+
+            if (existingUser == null)
+                throw new Exception("User not found");
+
+            existingUser.UserEmail = email;
+            existingUser.UserPassword = password;
+            existingUser.UserRole = role;
+
+            await _context.SaveChangesAsync();
+            return existingUser;
         }
 
-        public Task DeleteUser(int id)
+        public async Task DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            User? existingUser = await _context.Users.FindAsync(id);
+
+            if (existingUser == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            _context.Users.Remove(existingUser);
+            await _context.SaveChangesAsync();
         }
     }
 }
