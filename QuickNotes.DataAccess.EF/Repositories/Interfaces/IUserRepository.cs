@@ -18,7 +18,7 @@ namespace QuickNotes.DataAccess.EF.Repositories.Interfaces
 
         Task<User> CreateUser(UserDTO Email);
 
-        Task<User> UpdateUser(int id, string email, string passwordhashed);
+        Task<User> UpdateUser(int id, string email, string password, string role);
 
         Task DeleteUser(int id);
     }
