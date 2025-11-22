@@ -2,6 +2,8 @@
 using QuickNotes.DataAccess.EF.Models;
 using QuickNotes.DataAccess.EF.Repositories.Interfaces;
 using QuickNotesAPI.DataAccess.EF.Context;
+using QuickNotesAPI.DTO.UserDTO;
+using QuickNotesAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,26 +17,36 @@ namespace QuickNotes.DataAccess.EF.Repositories
     {
 
         private readonly QuickNotesContext _context;
+        private readonly IPasswordService _passwordService;
 
 
-        public UserRepository(QuickNotesContext context)
+        public UserRepository(QuickNotesContext context, IPasswordService passwordService)
         {
             _context = context;
+            _passwordService = passwordService;
         }
 
-        public async Task<User> CreateUser(User user)
+        public async Task<User> CreateUser(UserDTO User)
         {
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == user.UserEmail);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == User.Email);
             if (existingUser != null)
             {
                 throw new Exception("A user with this email already exists.");
             }
 
+            string hashed = _passwordService.HashPassword(User.Password);
 
 
-            await _context.Users.AddAsync(user);
+            var userEntity = new User
+            {
+                UserEmail = User.Email,
+                UserPassword = hashed,
+            };
+
+
+            await _context.Users.AddAsync(userEntity);
             await _context.SaveChangesAsync();
-            return user;
+            return userEntity;
 
 
         }
