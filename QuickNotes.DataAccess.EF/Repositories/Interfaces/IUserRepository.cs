@@ -1,5 +1,4 @@
 ﻿using QuickNotes.DataAccess.EF.Models;
-using QuickNotesAPI.DTO.UserDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +15,11 @@ namespace QuickNotes.DataAccess.EF.Repositories.Interfaces
 
         Task<User> GetUserByName(string username);
 
-        Task<User> CreateUser(UserDTO Email);
+        Task<User> CreateUser(User Email);
 
-        Task<User> UpdateUser(int id, string email, string password, string role);
+        Task<User> UpdateUser(uint id, string email, string password, string role);
 
         Task DeleteUser(int id);
+
     }
 }
