@@ -9,13 +9,15 @@ namespace QuickNotes.DataAccess.EF.Repositories.Interfaces
 {
     public interface INoteRepository
     {
-        Task<IEnumerable<Note>> GetAllNotesByUser();
+        Task<IEnumerable<Note>> GetAllNotesByUser(uint userId);
 
-        Task<User> GetNoteById(int id);
+        Task<Note> GetNoteById(uint userId);
 
-        Task<User> CreateNote(Note note);
+        Task<IEnumerable<Note>> SearchNotes(uint userId, string query);
 
-        Task<User> UpdateUser(uint id, string noteTitle, string noteContent);
+        Task<Note> CreateNote(Note note);
+
+        Task<Note> UpdateNote(uint id, string noteTitle, string noteContent);
 
         Task DeleteNote(int id);
     }
