@@ -1,5 +1,7 @@
-﻿using QuickNotes.DataAccess.EF.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using QuickNotes.DataAccess.EF.Models;
 using QuickNotes.DataAccess.EF.Repositories.Interfaces;
+using QuickNotesAPI.DataAccess.EF.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,46 @@ namespace QuickNotes.DataAccess.EF.Repositories
 {
     public class NoteRepository : INoteRepository
     {
-        public Task<User> CreateNote(Note note)
+
+        private readonly QuickNotesContext _context;
+
+        public NoteRepository( QuickNotesContext context)
+        {
+            context = _context;
+        }
+
+        public async Task<Note> CreateNote(Note note)
+        {
+            var existingNote = await _context.Notes.FirstOrDefaultAsync(u => u.NoteId == note.NoteId);
+            if (existingNote != null)
+            {
+                throw new Exception("A user with this email already exists.");
+            }
+
+
+            await _context.Notes.AddAsync(note);
+            await _context.SaveChangesAsync();
+            return note;
+        }
+
+        public async Task<IEnumerable<Note>> GetAllNotesByUser(uint userId)
+        {
+            return await _context.Notes.
+                Where(x => x.UserId == userId).
+                ToListAsync();
+        }
+
+        public Task<Note> GetNoteById(uint userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Note>> SearchNotes(uint userId, string query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> UpdateUser(uint id, string noteTitle, string noteContent)
         {
             throw new NotImplementedException();
         }
@@ -20,17 +61,7 @@ namespace QuickNotes.DataAccess.EF.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Note>> GetAllNotesByUser()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> GetNoteById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> UpdateUser(uint id, string noteTitle, string noteContent)
+        public Task<Note> UpdateNote(uint id, string noteTitle, string noteContent)
         {
             throw new NotImplementedException();
         }
