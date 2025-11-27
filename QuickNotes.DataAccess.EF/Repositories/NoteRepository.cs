@@ -41,29 +41,48 @@ namespace QuickNotes.DataAccess.EF.Repositories
                 ToListAsync();
         }
 
-        public Task<Note> GetNoteById(uint userId)
+        public async Task<Note> GetNoteById(uint noteId, int userId)
+        {
+            var note = await _context.Notes
+                .SingleOrDefaultAsync(n => n.NoteId == noteId && n.UserId == userId);
+
+            if (note == null)
+            {
+                throw new KeyNotFoundException("The note does not exist.");
+            }
+
+            return note;
+        }
+
+
+        public async Task<IEnumerable<Note>> SearchNotes(uint userId, string query)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Note>> SearchNotes(uint userId, string query)
+        public async Task<Note> UpdateNote(uint id, string noteTitle, string noteContent)
         {
             throw new NotImplementedException();
         }
 
-        public Task<User> UpdateUser(uint id, string noteTitle, string noteContent)
+        public async Task<bool> DeleteNote(int noteId, int userId)
         {
-            throw new NotImplementedException();
+            var existingNote = await _context.Notes
+                .SingleOrDefaultAsync(n => n.NoteId == noteId && n.UserId == userId);
+
+            if (existingNote == null)
+            {
+                return false;
+            }
+               
+
+            _context.Notes.Remove(existingNote);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
-        public Task DeleteNote(int id)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<Note> UpdateNote(uint id, string noteTitle, string noteContent)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
