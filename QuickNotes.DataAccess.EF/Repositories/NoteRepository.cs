@@ -15,9 +15,9 @@ namespace QuickNotes.DataAccess.EF.Repositories
 
         private readonly QuickNotesContext _context;
 
-        public NoteRepository( QuickNotesContext context)
+        public NoteRepository(QuickNotesContext context)
         {
-            context = _context;
+            _context = context;
         }
 
         public async Task<Note> CreateNote(Note note)
@@ -57,13 +57,31 @@ namespace QuickNotes.DataAccess.EF.Repositories
 
         public async Task<IEnumerable<Note>> SearchNotes(uint userId, string query)
         {
-            throw new NotImplementedException();
+            var lowerQuery = query.ToLower();
+
+            return await _context.Notes
+                .Where(n => n.UserId == userId &&
+                    (n.NoteContent.ToLower().Contains(lowerQuery) ||
+                     n.NoteTitle.ToLower().Contains(lowerQuery)))
+                .ToListAsync();
         }
 
         public async Task<Note> UpdateNote(uint id, string noteTitle, string noteContent)
         {
-            throw new NotImplementedException();
+            var note = await _context.Notes.FirstOrDefaultAsync(n => n.NoteId == id);
+
+            if (note == null)
+            {
+                throw new KeyNotFoundException("The note does not exist.");
+            }
+
+            note.NoteTitle = noteTitle;
+            note.NoteContent = noteContent;
+
+            await _context.SaveChangesAsync();
+            return note;
         }
+
 
         public async Task<bool> DeleteNote(int noteId, int userId)
         {
