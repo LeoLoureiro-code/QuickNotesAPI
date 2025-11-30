@@ -81,7 +81,7 @@ namespace QuickNotesAPI.Controllers
         {
             try
             {
-                var existingUser = await _userRepository.GetUserByName(login.Email);
+                var existingUser = await _userRepository.GetUserByEmail(login.Email);
 
                 if (existingUser == null)
                 {
