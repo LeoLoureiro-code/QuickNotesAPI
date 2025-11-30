@@ -13,7 +13,7 @@ namespace QuickNotes.DataAccess.EF.Repositories.Interfaces
 
         Task<User> GetUserById(int id);
 
-        Task<User> GetUserByName(string username);
+        Task<User> GetUserByEmail(string userEmail);
 
         Task<User> CreateUser(User Email);
 

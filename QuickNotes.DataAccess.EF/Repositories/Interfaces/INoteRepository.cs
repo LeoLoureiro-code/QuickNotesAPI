@@ -11,7 +11,7 @@ namespace QuickNotes.DataAccess.EF.Repositories.Interfaces
     {
         Task<IEnumerable<Note>> GetAllNotesByUser(uint userId);
 
-        Task<Note> GetNoteById(uint noteId, uint userId);
+        Task<Note> GetNoteById(uint noteId, int userId);
 
         Task<IEnumerable<Note>> SearchNotes(uint userId, string query);
 
@@ -19,6 +19,6 @@ namespace QuickNotes.DataAccess.EF.Repositories.Interfaces
 
         Task<Note> UpdateNote(uint id, string noteTitle, string noteContent);
 
-        Task DeleteNote(int id);
+        Task<bool> DeleteNote(int noteId, int userId);
     }
 }
