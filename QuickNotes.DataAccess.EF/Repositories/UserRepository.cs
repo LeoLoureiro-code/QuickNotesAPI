@@ -56,7 +56,7 @@ namespace QuickNotes.DataAccess.EF.Repositories
             return user;
         }
 
-        public async Task<User> GetUserByName(string userEmail)
+        public async Task<User> GetUserByEmail(string userEmail)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail== userEmail);
 
