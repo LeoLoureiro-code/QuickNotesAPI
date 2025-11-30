@@ -1,21 +1,35 @@
-﻿using Microsoft.AspNetCore.Identity;
-using QuickNotesAPI.Services.Interfaces;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace QuickNotesAPI.Services
+public class PasswordService
 {
-    public class PasswordService : IPasswordService
+    public string HashPassword(string password)
     {
-        private readonly PasswordHasher<object> _hasher = new PasswordHasher<object>();
+        byte[] salt = RandomNumberGenerator.GetBytes(16);
 
-        public string HashPassword(string password)
-        {   
-             return _hasher.HashPassword(null, password);
-        }
+        byte[] hash = KeyDerivation.Pbkdf2(
+            password,
+            salt,
+            KeyDerivationPrf.HMACSHA256,
+            100000,
+            32);
 
-        public bool VerifyPassword(string hashedPassword, string providedPassword)
-        {
-            var result = _hasher.VerifyHashedPassword(null, hashedPassword, providedPassword);
-            return result == PasswordVerificationResult.Success;
-        }
+        return $"{Convert.ToBase64String(salt)}.{Convert.ToBase64String(hash)}";
+    }
+
+    public bool VerifyPassword(string password, string hashString)
+    {
+        var parts = hashString.Split('.');
+        var salt = Convert.FromBase64String(parts[0]);
+        var hash = Convert.FromBase64String(parts[1]);
+
+        byte[] hashToCompare = KeyDerivation.Pbkdf2(
+            password,
+            salt,
+            KeyDerivationPrf.HMACSHA256,
+            100000,
+            32);
+
+        return hash.SequenceEqual(hashToCompare);
     }
 }
