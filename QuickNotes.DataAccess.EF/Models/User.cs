@@ -11,7 +11,11 @@ public partial class User
 
     public string UserPassword { get; set; } = null!;
 
-    public string? UserRole { get; set; }
+    public string UserRole { get; set; } = null!;
+
+    public string? UserRefreshToken { get; set; }
+
+    public DateOnly? UserRefreshTokenExpiryTime { get; set; }
 
     public virtual ICollection<Note> Notes { get; set; } = new List<Note>();
 
