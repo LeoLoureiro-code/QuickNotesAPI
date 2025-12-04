@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuickNotes.DataAccess.EF.Context;
 using QuickNotes.DataAccess.EF.Models;
 using QuickNotes.DataAccess.EF.Repositories.Interfaces;
-using QuickNotesAPI.DataAccess.EF.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;

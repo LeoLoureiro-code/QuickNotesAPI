@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuickNotes.DataAccess.EF.Context;
 using QuickNotes.DataAccess.EF.Models;
 using QuickNotes.DataAccess.EF.Repositories.Interfaces;
-using QuickNotesAPI.DataAccess.EF.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +41,7 @@ namespace QuickNotes.DataAccess.EF.Repositories
                 ToListAsync();
         }
 
-        public async Task<Note> GetNoteById(uint noteId, int userId)
+        public async Task<Note> GetNoteById(uint noteId, uint userId)
         {
             var note = await _context.Notes
                 .SingleOrDefaultAsync(n => n.NoteId == noteId && n.UserId == userId);
