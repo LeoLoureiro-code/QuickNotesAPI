@@ -15,7 +15,9 @@ public class JwtService :IJWTService
     {
         _config = config;
     }
-
+    /*
+     Add refresh tokens to DB
+     */
     public string GenerateToken(uint userId, string email, string role)
     {
         var jwt = _config.GetSection("Jwt");
