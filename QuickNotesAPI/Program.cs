@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using QuickNotes.DataAccess.EF.Repositories;
+using QuickNotes.DataAccess.EF.Repositories.Interfaces;
+using QuickNotesAPI.Services;
+using QuickNotesAPI.Services.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +33,16 @@ builder.Services
 
 
 builder.Services.AddControllers();
+
+//Services
+builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddSingleton<IJWTService, JwtService>();
+builder.Services.AddSingleton<IPasswordService, PasswordService>();
+
+//Repositories
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<INoteRepository, NoteRepository>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
