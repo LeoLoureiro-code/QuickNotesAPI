@@ -11,6 +11,6 @@ namespace QuickNotesAPI.DTO.Auth
         public string Password { get; set; } = null!;
         
         [Required]
-        public string RefreshToken { get; set; }
+        public string? RefreshToken { get; set; }
     }
 }
